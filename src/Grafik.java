@@ -1,15 +1,11 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-public class Grafik extends Canvas implements Runnable{
-    private int width = 800;
-    private int height = 600;
+public class Grafik extends Canvas implements Runnable {
+    private final int width = 800;
+    private final int height = 600;
 
     private Thread thread;
     int fps = 30;
@@ -17,20 +13,15 @@ public class Grafik extends Canvas implements Runnable{
 
     private BufferStrategy bs;
 
-    private int houseX, houseY;
-    private int houseVX, houseVY;
+    private final int gräsX, gräsY;
 
+    private int fågelX, fågelY, fågelVX, fågelVY;
 
-    private int treeX, treeY, treeVX, treeVY;
-
-    private int marioX, marioY, marioVX, marioVY;
-
-    private BufferedImage mario;
 
 
     public Grafik() {
-        JFrame frame = new JFrame("A simple painting");
-        this.setSize(width,height);
+        JFrame frame = new JFrame("Very scuffed flappybird");
+        this.setSize(width, height);
         frame.add(this);
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,38 +30,24 @@ public class Grafik extends Canvas implements Runnable{
 
         isRunning = false;
 
-        try {
-            mario = ImageIO.read(new File("supermario2.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        houseX = 300;
-        houseY = 150;
-        houseVX = 1;
-        houseVY = 0;
+        gräsX = 300;
+        gräsY = 150;
 
-        treeX = 200;
-        treeY = 200;
-        treeVX = 0;
-        treeVY = 0;
 
-        marioX = 0;
-        marioY = 0;
-        marioVX = 2;
-        marioVY = 2;
+
+        fågelX = 200;
+        fågelY = 200;
+        fågelVX = 0;
+        fågelVY = 0;
+
     }
 
     public void update() {
 
-        marioX += marioVX;
-        marioY += marioVY;
-        if (marioX < 0 || marioX > width-80)
-            marioVX = -marioVX;
-        if (marioY < 0 || marioY > height-80)
-            marioVY = -marioVY;
-        treeX += treeVX;
-        treeY += treeVY;
+
+        fågelX += fågelVX;
+        fågelY += fågelVY;
     }
 
     public void draw() {
@@ -83,43 +60,42 @@ public class Grafik extends Canvas implements Runnable{
 
         update();
         g.setColor(Color.WHITE);
-        g.fillRect(0,0,width,height);
-        drawHouse(g, houseX,houseY);
-        drawTree(g, treeX,treeY);
-        drawTree(g, 100,200);
-        drawTree(g, 110,200);
-        drawTree(g, 120,200);
-        drawTree(g, 130,200);
-        drawTree(g, 140,200);
-        drawTree(g, 300,200);
-        g.drawImage(mario,marioX,marioY,48,48,null);
+        g.fillRect(0, 0, width, height);
+        drawGräs(g, gräsX, gräsY);
+        drawFågel(g, fågelX, fågelY);
         g.dispose();
         bs.show();
     }
 
 
 
-
-    private void drawTree(Graphics g, int x, int y) {
+    private void drawFågel(Graphics g, int x, int y) {
         g.setColor(Color.green.darker());
-        int[] xs = {0+x, 10+x, 20+x};
-        int[] ys = {30+y,0+y,30+y};
-        g.setColor(new Color(200,128,30));
-        g.fillRect(7+x,30+y,6,10);
+        int[] xs = {0 + x, 10 + x, 20 + x};
+        int[] ys = {30 + y, 0 + y, 30 + y};
+        g.setColor(new Color(200, 128, 30));
+        g.fillRect(7 + x, 30 + y, 6, 10);
     }
 
 
-
-    private void drawHouse(Graphics g, int x, int y) {
+    private void drawGräs(Graphics g, int x, int y) {
         g.setColor(Color.green);
         g.fillRect(0, 500, 800, 100);
         g.setColor(new Color(0x444444));
-        int[] xcoords = {x-5, x + 25, x + 55};
-        int[] ycoords = {y-40, y - 65, y-40};
+        int[] xcoords = {x - 5, x + 25, x + 55};
+        int[] ycoords = {y - 40, y - 65, y - 40};
 
     }
 
-    public static void main(String[] args) {
+    private void drawRör(Graphics g, int x, int y) {
+        g.setColor(Color.green.darker());
+        g.fillRect(0, 500, 200, 300);
+        int[] xcoords = {x - 5, x + 25, x + 55};
+        int[] ycoords = {y - 40, y - 65, y - 40};
+    }
+
+
+        public static void main(String[] args) {
         Grafik painting = new Grafik();
         painting.start();
     }
@@ -141,12 +117,12 @@ public class Grafik extends Canvas implements Runnable{
 
     @Override
     public void run() {
-        double deltaT = 1000.0/fps;
+        double deltaT = 1000.0 / fps;
         long lastTime = System.currentTimeMillis();
 
         while (isRunning) {
             long now = System.currentTimeMillis();
-            if (now-lastTime > deltaT) {
+            if (now - lastTime > deltaT) {
                 update();
                 draw();
                 lastTime = now;
@@ -165,73 +141,59 @@ public class Grafik extends Canvas implements Runnable{
         @Override
         public void keyPressed(KeyEvent keyEvent) {
             if (keyEvent.getKeyChar() == 'a') {
-                treeVX = -5;
+                fågelVX = -5;
             }
             if (keyEvent.getKeyChar() == 'd') {
-                treeVX = 5;
+                fågelVX = 5;
             }
             if (keyEvent.getKeyChar() == 'w') {
-                treeVY = -5;
+                fågelVY = -5;
             }
             if (keyEvent.getKeyChar() == 's') {
-                treeVY = 5;
+                fågelVY = 5;
+            }
+            if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
+                fågelVX = -5;
+            }
+            if (keyEvent.getKeyChar() == KeyEvent.VK_RIGHT) {
+                fågelVX = 5;
+            }
+            if (keyEvent.getKeyChar() == KeyEvent.VK_UP) {
+                fågelVY = -5;
+            }
+            if (keyEvent.getKeyChar() == KeyEvent.VK_DOWN) {
+                fågelVY = 5;
             }
         }
+
 
         @Override
         public void keyReleased(KeyEvent keyEvent) {
             if (keyEvent.getKeyChar() == 'a') {
-                treeVX = 0;
+                fågelVX = 0;
             }
             if (keyEvent.getKeyChar() == 'd') {
-                treeVX = 0;
+                fågelVX = 0;
             }
             if (keyEvent.getKeyChar() == 'w') {
-                treeVY = 0;
+                fågelVY = 0;
             }
             if (keyEvent.getKeyChar() == 's') {
-                treeVY = 0;
+                fågelVY = 0;
             }
-        }
-    }
+            if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
+                fågelVX = -0;
+            }
+            if (keyEvent.getKeyChar() == KeyEvent.VK_RIGHT) {
+                fågelVX = 0;
+            }
+            if (keyEvent.getKeyChar() == KeyEvent.VK_UP) {
+                fågelVY = -0;
+            }
+            if (keyEvent.getKeyChar() == KeyEvent.VK_DOWN) {
+                fågelVY = 0;
 
-    private class ML implements MouseListener {
-
-        @Override
-        public void mouseClicked(MouseEvent mouseEvent) {
-
-        }
-
-        @Override
-        public void mousePressed(MouseEvent mouseEvent) {
-
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent mouseEvent) {
-
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent mouseEvent) {
-
-        }
-
-        @Override
-        public void mouseExited(MouseEvent mouseEvent) {
-
-        }
-    }
-
-    private class MML implements MouseMotionListener {
-
-        @Override
-        public void mouseDragged(MouseEvent mouseEvent) {
-
-        }
-
-        @Override
-        public void mouseMoved(MouseEvent mouseEvent) {
+            }
 
         }
     }
