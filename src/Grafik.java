@@ -17,6 +17,7 @@ public class Grafik extends Canvas implements Runnable {
 
     private int fågelX, fågelY, fågelVX, fågelVY;
 
+    private int rörX, rörY;
 
 
     public Grafik() {
@@ -33,8 +34,6 @@ public class Grafik extends Canvas implements Runnable {
 
         gräsX = 300;
         gräsY = 150;
-
-
 
         fågelX = 200;
         fågelY = 200;
@@ -63,6 +62,8 @@ public class Grafik extends Canvas implements Runnable {
         g.fillRect(0, 0, width, height);
         drawGräs(g, gräsX, gräsY);
         drawFågel(g, fågelX, fågelY);
+        drawRör(g, 600, 300);
+        drawRör(g, 700, 300);
         g.dispose();
         bs.show();
     }
@@ -70,10 +71,9 @@ public class Grafik extends Canvas implements Runnable {
 
 
     private void drawFågel(Graphics g, int x, int y) {
-        g.setColor(Color.green.darker());
-        int[] xs = {0 + x, 10 + x, 20 + x};
-        int[] ys = {30 + y, 0 + y, 30 + y};
-        g.setColor(new Color(200, 128, 30));
+        g.setColor(Color.darkGray);
+        int[] xs = {x, 10 + x, 20 + x};
+        int[] ys = {30 + y, y, 30 + y};
         g.fillRect(7 + x, 30 + y, 6, 10);
     }
 
@@ -89,9 +89,7 @@ public class Grafik extends Canvas implements Runnable {
 
     private void drawRör(Graphics g, int x, int y) {
         g.setColor(Color.green.darker());
-        g.fillRect(0, 500, 200, 300);
-        int[] xcoords = {x - 5, x + 25, x + 55};
-        int[] ycoords = {y - 40, y - 65, y - 40};
+        g.fillRect(600, 300, 75, 200);
     }
 
 
